@@ -70,7 +70,7 @@ cdk synth
 sam build -t ./cdk.out/SampleStack.template.json --use-container
 ``` 
 
-The SAM build folder is cleared to support the `sample\sam_helper.py` logic. 
+The SAM build folder is cleared to support the `sample\stack\sam_helper.py` logic. 
 
 The helper is used both during `cdk synth` and `cdk deploy`. During synth we want the `sample\function` content used for the the lambda. During deploy we want the `.aws-sam\build\<my-function>` content used. The helper looks for the existence of the `.aws-sam\build\<my-function>` folder, and if it doesn't exists it uses the lambda's default content.
 
