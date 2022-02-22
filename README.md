@@ -1,6 +1,16 @@
 
-# Welcome to your CDK Python project!
+# Welcome to your CDK Python project with beta SAM integration!
 
+
+## Prerequisites
+CDK
+https://aws.amazon.com/getting-started/guides/setup-cdk/
+
+AWS SAM 
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html
+
+
+## Overview
 This is a blank project for Python development with CDK.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
@@ -43,11 +53,35 @@ At this point you can now synthesize the CloudFormation template for this code.
 $ cdk synth
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
+To add additional dependencies to the CDK app, for example other CDK libraries, just add
+them to your `requirements.txt` file and rerun the `pip install -r requirements.txt`
 command.
 
-## Useful commands
+Now the lambda can be build with it's dependencies. The `sam-build.ps1` script runs the following commands.
+
+```powershell
+$samBuildPath="./.aws-sam/build"
+if (Test-Path -Path $samBuildPath) {
+    Remove-Item -Recurse -Force $samBuildPath
+}
+
+cdk synth
+
+sam build -t ./cdk.out/SampleStack.template.json --use-container
+``` 
+
+The SAM build folder is cleared to support the `sample\sam_helper.py` logic. 
+
+The helper is used both during `cdk synth` and `cdk deploy`. During synth we want the `sample\function` content used for the the lambda. During deploy we want the `.aws-sam\build\<my-function>` content used. The helper looks for the existence of the `.aws-sam\build\<my-function>` folder, and if it doesn't exists it uses the lambda's default content.
+
+After SAM build has been run a standard CDK deploy can be used.
+
+```
+cdk deploy
+```
+
+
+## Useful CDK commands
 
  * `cdk ls`          list all stacks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
